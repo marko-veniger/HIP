@@ -31,7 +31,7 @@
 #include <thread>
 #include <chrono>
 #include <vector>
-
+#if 0
 /*
     This testcase verifies HIP Mem VMM API basic scenario - supported on all devices
  */
@@ -83,3 +83,4 @@ TEST_CASE("Unit_hipMemVmm_Basic") {
   HIP_CHECK(hipMemAddressFree(reservedAddress, size));
 }
 
+#endif
