@@ -32,17 +32,6 @@ constexpr hipMemPoolProps kPoolPropsValid = {
   {0}
 };
 
-constexpr hipMemPoolProps kPoolPropsInvalid = {
-  -1,
-  -1,
-  {
-    -1,
-    -1
-  },
-  nullptr,
-  {-1}
-};
-
 TEST_CASE("Unit_hipMemPoolCreate_negative") {
     HIP_CHECK(hipSetDevice(0));
     int mem_pool_support = 0;
@@ -61,10 +50,6 @@ TEST_CASE("Unit_hipMemPoolCreate_negative") {
 
     SECTION("properties is null") {
         REQUIRE(hipMemPoolCreate(&mem_pool, nullptr) != hipSuccess);
-    }
-
-    SECTION("properties are invalid") {
-        REQUIRE(hipMemPoolCreate(&mem_pool, &kPoolPropsInvalid) != hipSuccess);
     }
 
 	HIP_CHECK(hipMemPoolDestroy(mem_pool));
