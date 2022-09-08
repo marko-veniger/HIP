@@ -91,7 +91,7 @@ TEST_CASE("Unit_hipMemPoolImportExport_Positive") {
 		HIP_CHECK(hipStreamSynchronize(nullptr));
 		HIP_CHECK(hipMemcpy(A_d, A_h, numElements * sizeof(float), hipMemcpyHostToDevice));
 		
-		HIP_CHECK(hipMemPoolExportPointer(&exp_data, &A_d));
+		HIP_CHECK(hipMemPoolExportPointer(&exp_data, A_d));
 		
 		REQUIRE(write(fd[1], &exp_data, sizeof(exp_data)) >= 0);
 
@@ -139,28 +139,32 @@ TEST_CASE("Unit_hipMemPoolImportExport_Positive") {
 TEST_CASE("Unit_hipMemPoolImportExportToShareableHandle_Negative") {
 
 	hipMemPool_t mem_pool = nullptr;
+	hipMemPool_t new_mem_pool = nullptr;
 
 	SECTION("Invalid Shareable Handle") {
 		HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsForExport));
 		HIP_CHECK_ERROR(hipMemPoolExportToShareableHandle(nullptr, mem_pool, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
-		HIP_CHECK_ERROR(hipMemPoolImportFromShareableHandle(&mem_pool, nullptr, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
+		HIP_CHECK_ERROR(hipMemPoolImportFromShareableHandle(&new_mem_pool, nullptr, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
 		HIP_CHECK(hipMemPoolDestroy(mem_pool));
+		HIP_CHECK(hipMemPoolDestroy(new_mem_pool));
 	}
 
 	SECTION("Invalid Flag") {
 		int share_handle;
 		HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsForExport));
 		HIP_CHECK_ERROR(hipMemPoolExportToShareableHandle(&share_handle, mem_pool, hipMemHandleTypePosixFileDescriptor, -1), hipErrorInvalidValue);
-		HIP_CHECK_ERROR(hipMemPoolImportFromShareableHandle(&mem_pool, &share_handle, hipMemHandleTypePosixFileDescriptor, -1), hipErrorInvalidValue);
+		HIP_CHECK_ERROR(hipMemPoolImportFromShareableHandle(&new_mem_pool, &share_handle, hipMemHandleTypePosixFileDescriptor, -1), hipErrorInvalidValue);
 		HIP_CHECK(hipMemPoolDestroy(mem_pool));
+		HIP_CHECK(hipMemPoolDestroy(new_mem_pool));
 	}
 	
 	SECTION("Memory pool invalid properties") {
 		int share_handle;
 		HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsNonShareable));
 		HIP_CHECK_ERROR(hipMemPoolExportToShareableHandle(&share_handle, mem_pool, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
-		HIP_CHECK_ERROR(hipMemPoolImportFromShareableHandle(&mem_pool, &share_handle, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
+		HIP_CHECK_ERROR(hipMemPoolImportFromShareableHandle(&new_mem_pool, &share_handle, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
 		HIP_CHECK(hipMemPoolDestroy(mem_pool));
+		HIP_CHECK(hipMemPoolDestroy(new_mem_pool));
 	}
 
 }
