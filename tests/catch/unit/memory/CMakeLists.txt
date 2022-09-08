@@ -101,6 +101,7 @@ set(TEST_SRC
     hipMemPoolCreate.cc
     hipMemPoolDestroy.cc
     hipMemPoolTrimTo.cc
+	hipMemPoolImportExport.cc
 )
 else()
 set(TEST_SRC
@@ -178,6 +179,7 @@ set(TEST_SRC
     hipMemPoolCreate.cc
     hipMemPoolDestroy.cc
     hipMemPoolTrimTo.cc
+	hipMemPoolImportExport.cc
 )
 endif()
 
