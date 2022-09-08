@@ -173,15 +173,12 @@ TEST_CASE("Unit_hipMemPoolImportFromShareableHandle_Negative") {
 
 	SECTION("Invalid parameters") {
 		int share_handle;
-		int dummy_share_handle;
 
 		HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsForExport));
 		HIP_CHECK(hipMemPoolExportToShareableHandle(&share_handle, mem_pool, hipMemHandleTypePosixFileDescriptor, 0));
 
 		// Nullptr sharable handle
 		HIP_CHECK_ERROR(hipMemPoolImportFromShareableHandle(&shared_mem_pool, nullptr, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
-		// Invalid sharable handle
-		HIP_CHECK_ERROR(hipMemPoolImportFromShareableHandle(&shared_mem_pool, &dummy_share_handle, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
 		// Invalid Memory Pool
 		HIP_CHECK_ERROR(hipMemPoolImportFromShareableHandle(nullptr, &share_handle, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
 		// Invalid flag
@@ -227,6 +224,7 @@ TEST_CASE("Unit_hipMemPoolExportPointer_Negative") {
 	HIP_CHECK_ERROR(hipMemPoolExportPointer(&exp_data, nullptr), hipErrorInvalidValue);
 
 	HIP_CHECK(hipFreeAsync(reinterpret_cast<void*>(A), nullptr));
+	HIP_CHECK(hipStreamSynchronize(nullptr));
 	HIP_CHECK(hipMemPoolDestroy(mem_pool));
 }
 
@@ -249,16 +247,22 @@ TEST_CASE("Unit_hipMemPoolImportPointer_Negative") {
 
 	HIP_CHECK(hipMemPoolImportFromShareableHandle(&shared_mem_pool, &share_handle, hipMemHandleTypePosixFileDescriptor, 0));
 
+	printf("A\n");
+
 	//Invalid Device pointer
 	HIP_CHECK_ERROR(hipMemPoolImportPointer(nullptr, shared_mem_pool, &exp_data), hipErrorInvalidValue);
 	//Invalid Memory Pool
 	HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&A), nullptr, &exp_data), hipErrorInvalidValue);
+	printf("B\n");
 	//Invalid Exported data
 	HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&A), shared_mem_pool, &dummy_exp_data), hipErrorInvalidValue);
 	//Nullptr Exported data
 	HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&A), shared_mem_pool, nullptr), hipErrorInvalidValue);
 
+	printf("C\n");
+
 	HIP_CHECK(hipFreeAsync(reinterpret_cast<void*>(A), nullptr));
+	HIP_CHECK(hipStreamSynchronize(nullptr));
 	HIP_CHECK(hipMemPoolDestroy(mem_pool));
 }
 
