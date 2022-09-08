@@ -193,7 +193,7 @@ TEST_CASE("Unit_hipMemPoolImportFromShareableHandle_Negative") {
 	SECTION("Imported Memory pool invalid allocations") {
 		int share_handle;
 		float* A;
-		numElements = 8 * 1024;
+		int numElements = 8 * 1024;
 		int device = 0;
 
 		HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsForExport));
@@ -212,12 +212,13 @@ TEST_CASE("Unit_hipMemPoolExportPointer_Negative") {
 	hipMemPool_t mem_pool = nullptr;
 	hipMemPoolPtrExportData exp_data;
 	float* A;
-	numElements = 8 * 1024;
+	int numElements = 8 * 1024;
+	int share_handle;
 
 	HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsForExport));
 	HIP_CHECK(hipMemPoolExportToShareableHandle(&share_handle, mem_pool, hipMemHandleTypePosixFileDescriptor, 0));
 	HIP_CHECK(hipMallocFromPoolAsync(reinterpret_cast<void**>(&A), numElements * sizeof(float), mem_pool, nullptr));
-	HIP_CHECK(hipStreamSynchronize(nullptr);
+	HIP_CHECK(hipStreamSynchronize(nullptr));
 
 	//Invalid Exported data
 	HIP_CHECK_ERROR(hipMemPoolExportPointer(nullptr, A), hipErrorInvalidValue);
@@ -235,12 +236,13 @@ TEST_CASE("Unit_hipMemPoolImportPointer_Negative") {
 	hipMemPool_t shared_mem_pool = nullptr;
 	hipMemPoolPtrExportData exp_data, dummy_exp_data;
 	float* A, A_shared;
-	numElements = 8 * 1024;
+	int numElements = 8 * 1024;
+	int share_handle;
 
 	HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsForExport));
 	HIP_CHECK(hipMemPoolExportToShareableHandle(&share_handle, mem_pool, hipMemHandleTypePosixFileDescriptor, 0));
 	HIP_CHECK(hipMallocFromPoolAsync(reinterpret_cast<void**>(&A), numElements * sizeof(float), mem_pool, nullptr));
-	HIP_CHECK(hipStreamSynchronize(nullptr);
+	HIP_CHECK(hipStreamSynchronize(nullptr));
 
 
 	HIP_CHECK(hipMemPoolExportPointer(&exp_data, A));
