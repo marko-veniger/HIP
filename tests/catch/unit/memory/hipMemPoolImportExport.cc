@@ -92,7 +92,7 @@ TEST_CASE("Unit_hipMemPoolImportExport_Positive") {
 		HIP_CHECK(hipMemPoolExportToShareableHandle(&share_handle, mem_pool, hipMemHandleTypePosixFileDescriptor, 0));
 		
 		HIP_CHECK(hipStreamSynchronize(nullptr));
-		HIP_CHECK(hipMemCpy(A_d, A_h, numElements * sizeof(float), hipMemcpyHostToDevice));
+		HIP_CHECK(hipMemcpy(A_d, A_h, numElements * sizeof(float), hipMemcpyHostToDevice));
 		
 		HIP_CHECK(hipMemPoolExportPointer(&exp_data, &A_d));
 		
@@ -122,7 +122,7 @@ TEST_CASE("Unit_hipMemPoolImportExport_Positive") {
 		HIP_CHECK(hipMemPoolImportFromShareableHandle(&mem_pool, &new_handle, hipMemHandleTypePosixFileDescriptor, 0));
 		HIP_CHECK(hipMemPoolImportPointer(reinterpret_cast<void**>(&A_d), mem_pool, &exp_data));
 		
-		HIP_CHECK(hipMemCpy(A_h_copy, A_d, numElements * sizeof(float), hipMemcpyDeviceToHost));
+		HIP_CHECK(hipMemcpy(A_h_copy, A_d, numElements * sizeof(float), hipMemcpyDeviceToHost));
 		
 		
 		test_result = true;
