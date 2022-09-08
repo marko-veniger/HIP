@@ -230,6 +230,7 @@ TEST_CASE("Unit_hipMemPoolExportPointer_Negative") {
 
 TEST_CASE("Unit_hipMemPoolImportPointer_Negative") {
 
+	printf("AAAAAAAAAAAAAAAAAAAAAAA\n");
 	hipMemPool_t mem_pool = nullptr;
 	hipMemPool_t shared_mem_pool = nullptr;
 	hipMemPoolPtrExportData exp_data, dummy_exp_data;
@@ -247,19 +248,19 @@ TEST_CASE("Unit_hipMemPoolImportPointer_Negative") {
 
 	HIP_CHECK(hipMemPoolImportFromShareableHandle(&shared_mem_pool, &share_handle, hipMemHandleTypePosixFileDescriptor, 0));
 
-	printf("A\n");
+	printf("AAAAAAAAAAAAAAAAAAAAAAA\n");
 
 	//Invalid Device pointer
 	HIP_CHECK_ERROR(hipMemPoolImportPointer(nullptr, shared_mem_pool, &exp_data), hipErrorInvalidValue);
 	//Invalid Memory Pool
 	HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&A), nullptr, &exp_data), hipErrorInvalidValue);
-	printf("B\n");
+	printf("BBBBBBBBBBBBBBBBBBBBBBB\n");
 	//Invalid Exported data
 	HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&A), shared_mem_pool, &dummy_exp_data), hipErrorInvalidValue);
 	//Nullptr Exported data
 	HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&A), shared_mem_pool, nullptr), hipErrorInvalidValue);
 
-	printf("C\n");
+	printf("CCCCCCCCCCCCCCCCCCCCCC\n");
 
 	HIP_CHECK(hipFreeAsync(reinterpret_cast<void*>(A), nullptr));
 	HIP_CHECK(hipStreamSynchronize(nullptr));
