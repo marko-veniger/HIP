@@ -233,8 +233,8 @@ TEST_CASE("Unit_hipMemPoolImportPointer_Negative") {
 	printf("AAAAAAAAAAAAAAAAAAAAAAA\n");
 	hipMemPool_t mem_pool = nullptr;
 	hipMemPool_t shared_mem_pool = nullptr;
-	hipMemPoolPtrExportData exp_data, dummy_exp_data;
-	float* A, A_shared;
+	hipMemPoolPtrExportData exp_data;
+	float* A;
 	int numElements = 8 * 1024;
 	int share_handle;
 
@@ -255,8 +255,6 @@ TEST_CASE("Unit_hipMemPoolImportPointer_Negative") {
 	//Invalid Memory Pool
 	HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&A), nullptr, &exp_data), hipErrorInvalidValue);
 	printf("BBBBBBBBBBBBBBBBBBBBBBB\n");
-	//Invalid Exported data
-	HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&A), shared_mem_pool, &dummy_exp_data), hipErrorInvalidValue);
 	//Nullptr Exported data
 	HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&A), shared_mem_pool, nullptr), hipErrorInvalidValue);
 
