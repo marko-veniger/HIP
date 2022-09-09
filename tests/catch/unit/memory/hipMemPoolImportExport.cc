@@ -251,9 +251,9 @@ TEST_CASE("Unit_hipMemPoolExportPointer_Negative") {
 	HIP_CHECK(hipMallocFromPoolAsync(reinterpret_cast<void**>(&A), numElements * sizeof(float), mem_pool, nullptr));
 	HIP_CHECK(hipStreamSynchronize(nullptr));
 	
-	SECTION("Invalid exported data") {
-	    //HIP_CHECK_ERROR(hipMemPoolExportPointer(nullptr, A), hipErrorInvalidValue);
-	}
+	/*SECTION("Invalid exported data") {
+	    HIP_CHECK_ERROR(hipMemPoolExportPointer(nullptr, A), hipErrorInvalidValue);
+	}*/
 
 	SECTION("Invalid device pointer") {
 	    HIP_CHECK_ERROR(hipMemPoolExportPointer(&exp_data, nullptr), hipErrorInvalidValue);
