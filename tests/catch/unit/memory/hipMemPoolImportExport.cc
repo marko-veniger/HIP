@@ -59,6 +59,7 @@ TEST_CASE("Unit_hipMemPoolImportExport_Positive") {
         return;
     }
 	int fd[2];
+	int fd_result[2];
 	int share_handle;
 	int i;
 	bool test_result = false;
@@ -79,6 +80,7 @@ TEST_CASE("Unit_hipMemPoolImportExport_Positive") {
 	HIP_CHECK(hipMemPoolExportToShareableHandle(&share_handle, mem_pool, hipMemHandleTypePosixFileDescriptor, 0));
 
 	REQUIRE(pipe(fd) == 0);
+	REQUIRE(pipe(fd_result) == 0);
 
 	auto childpid = fork();
 	REQUIRE (childpid >= 0);
@@ -86,6 +88,7 @@ TEST_CASE("Unit_hipMemPoolImportExport_Positive") {
 	if (childpid > 0) {  // Parent
 		// writing only, no need for read-descriptor
 		REQUIRE(close(fd[0]) == 0);
+		REQUIRE(close(fd_result[1]) == 0);
 		HIP_CHECK(hipMallocFromPoolAsync(reinterpret_cast<void**>(&A_d), numElements * sizeof(float), mem_pool, nullptr));
 		
 		HIP_CHECK(hipStreamSynchronize(nullptr));
@@ -94,10 +97,13 @@ TEST_CASE("Unit_hipMemPoolImportExport_Positive") {
 		HIP_CHECK(hipMemPoolExportPointer(&exp_data, A_d));
 		
 		REQUIRE(write(fd[1], &exp_data, sizeof(exp_data)) >= 0);
-
+		REQUIRE(read(fd_result[0], &test_result, sizeof(test_result)) >= 0);
 		REQUIRE(close(fd[1]) == 0);
+		REQUIRE(close(fd_result[0]) == 0);
 		REQUIRE(wait(NULL) >= 0);
 
+		REQUIRE(test_result);
+		
 		HIP_CHECK(hipMemPoolDestroy(mem_pool));
 
 	} else if(childpid == 0){  // Child
@@ -105,6 +111,7 @@ TEST_CASE("Unit_hipMemPoolImportExport_Positive") {
 		int new_handle = -1;
 
 		close(fd[1]);
+		close(fd_result[0]);
 		read(fd[0], &exp_data, sizeof(exp_data));
 		close(fd[0]);
 
@@ -123,11 +130,8 @@ TEST_CASE("Unit_hipMemPoolImportExport_Positive") {
 			}
 		}
 		
-		if(!test_result) {
-			printf("Multiproc Shared mempool Test Failed!\n");
-		} else {
-			printf("Multiproc Shared mempool Test OK!\n");
-		}
+		write(fd_result[1], &test_result, sizeof(test_result))
+		close(fd_result[1]);
 		
 		exit(0);
 	} else { // fork(2) failed
@@ -141,15 +145,28 @@ TEST_CASE("Unit_hipMemPoolExportToShareableHandle_Negative") {
 
 	hipMemPool_t mem_pool = nullptr;
 
-		SECTION("Invalid parameters") {
+	SECTION("Invalid shareable handle") {
 		int share_handle;
 		HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsForExport));
 
-		// Invalid sharable handle
 		HIP_CHECK_ERROR(hipMemPoolExportToShareableHandle(nullptr, mem_pool, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
-		// Invalid Memory Pool
+
+		HIP_CHECK(hipMemPoolDestroy(mem_pool));
+	}
+	
+	SECTION("Invalid Memory Pool") {
+		int share_handle;
+		HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsForExport));
+
 		HIP_CHECK_ERROR(hipMemPoolExportToShareableHandle(&share_handle, nullptr, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
-		// Invalid flag
+
+		HIP_CHECK(hipMemPoolDestroy(mem_pool));
+	}
+	
+	SECTION("Invalid flag") {
+		int share_handle;
+		HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsForExport));
+
 		HIP_CHECK_ERROR(hipMemPoolExportToShareableHandle(&share_handle, mem_pool, hipMemHandleTypePosixFileDescriptor, -1), hipErrorInvalidValue);
 
 		HIP_CHECK(hipMemPoolDestroy(mem_pool));
@@ -171,17 +188,34 @@ TEST_CASE("Unit_hipMemPoolImportFromShareableHandle_Negative") {
 	hipMemPool_t mem_pool = nullptr;
 	hipMemPool_t shared_mem_pool = nullptr;
 
-	SECTION("Invalid parameters") {
+	SECTION("Invalid shareable handle") {
 		int share_handle;
 
 		HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsForExport));
 		HIP_CHECK(hipMemPoolExportToShareableHandle(&share_handle, mem_pool, hipMemHandleTypePosixFileDescriptor, 0));
 
-		// Nullptr sharable handle
 		HIP_CHECK_ERROR(hipMemPoolImportFromShareableHandle(&shared_mem_pool, nullptr, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
-		// Invalid Memory Pool
+
+		HIP_CHECK(hipMemPoolDestroy(mem_pool));
+	}
+	
+	SECTION("Invalid Memory Pool") {
+		int share_handle;
+
+		HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsForExport));
+		HIP_CHECK(hipMemPoolExportToShareableHandle(&share_handle, mem_pool, hipMemHandleTypePosixFileDescriptor, 0));
+
 		HIP_CHECK_ERROR(hipMemPoolImportFromShareableHandle(nullptr, &share_handle, hipMemHandleTypePosixFileDescriptor, 0), hipErrorInvalidValue);
-		// Invalid flag
+
+		HIP_CHECK(hipMemPoolDestroy(mem_pool));
+	}
+	
+	SECTION("Invalid flag") {
+		int share_handle;
+
+		HIP_CHECK(hipMemPoolCreate(&mem_pool, &kPoolPropsForExport));
+		HIP_CHECK(hipMemPoolExportToShareableHandle(&share_handle, mem_pool, hipMemHandleTypePosixFileDescriptor, 0));
+
 		HIP_CHECK_ERROR(hipMemPoolImportFromShareableHandle(&shared_mem_pool, &share_handle, hipMemHandleTypePosixFileDescriptor, -1), hipErrorInvalidValue);
 
 		HIP_CHECK(hipMemPoolDestroy(mem_pool));
@@ -216,13 +250,15 @@ TEST_CASE("Unit_hipMemPoolExportPointer_Negative") {
 	HIP_CHECK(hipMemPoolExportToShareableHandle(&share_handle, mem_pool, hipMemHandleTypePosixFileDescriptor, 0));
 	HIP_CHECK(hipMallocFromPoolAsync(reinterpret_cast<void**>(&A), numElements * sizeof(float), mem_pool, nullptr));
 	HIP_CHECK(hipStreamSynchronize(nullptr));
+	
+	SECTION("Invalid exported data") {
+	    HIP_CHECK_ERROR(hipMemPoolExportPointer(nullptr, A), hipErrorInvalidValue);
+	}
 
-	//Invalid Exported data
-	HIP_CHECK_ERROR(hipMemPoolExportPointer(nullptr, A), hipErrorInvalidValue);
-
-	//Invalid Device pointer
-	HIP_CHECK_ERROR(hipMemPoolExportPointer(&exp_data, nullptr), hipErrorInvalidValue);
-
+	SECTION("Invalid device pointer") {
+	    HIP_CHECK_ERROR(hipMemPoolExportPointer(&exp_data, nullptr), hipErrorInvalidValue);
+	}
+	
 	HIP_CHECK(hipFreeAsync(reinterpret_cast<void*>(A), nullptr));
 	HIP_CHECK(hipStreamSynchronize(nullptr));
 	HIP_CHECK(hipMemPoolDestroy(mem_pool));
@@ -230,7 +266,6 @@ TEST_CASE("Unit_hipMemPoolExportPointer_Negative") {
 
 TEST_CASE("Unit_hipMemPoolImportPointer_Negative") {
 
-	printf("AAAAAAAAAAAAAAAAAAAAAAA\n");
 	hipMemPool_t mem_pool = nullptr;
 	hipMemPool_t shared_mem_pool = nullptr;
 	hipMemPoolPtrExportData exp_data;
@@ -248,18 +283,13 @@ TEST_CASE("Unit_hipMemPoolImportPointer_Negative") {
 
 	HIP_CHECK(hipMemPoolImportFromShareableHandle(&shared_mem_pool, &share_handle, hipMemHandleTypePosixFileDescriptor, 0));
 
-	printf("AAAAAAAAAAAAAAAAAAAAAAA\n");
-
-	//Invalid Device pointer
-	//HIP_CHECK_ERROR(hipMemPoolImportPointer(nullptr, shared_mem_pool, &exp_data), hipErrorInvalidValue);
-	printf("QQQQQQQQQQQQQQQQQQQQQQQQQ\n");
-	//Invalid Memory Pool
-	HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&shared_A), nullptr, &exp_data), hipErrorInvalidValue);
-	printf("BBBBBBBBBBBBBBBBBBBBBBB\n");
-	//Nullptr Exported data
-	HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&shared_A), shared_mem_pool, nullptr), hipErrorInvalidValue);
-
-	printf("CCCCCCCCCCCCCCCCCCCCCC\n");
+	SECTION("Invalid Memory Pool data") {
+	    HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&shared_A), nullptr, &exp_data), hipErrorInvalidValue);
+	}
+	
+	SECTION("Invalid exported data") {
+	    HIP_CHECK_ERROR(hipMemPoolImportPointer(reinterpret_cast<void**>(&shared_A), shared_mem_pool, nullptr), hipErrorInvalidValue);;
+	}
 
 	HIP_CHECK(hipFreeAsync(reinterpret_cast<void*>(A), nullptr));
 	HIP_CHECK(hipStreamSynchronize(nullptr));
