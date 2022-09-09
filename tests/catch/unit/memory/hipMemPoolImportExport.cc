@@ -130,7 +130,7 @@ TEST_CASE("Unit_hipMemPoolImportExport_Positive") {
 			}
 		}
 		
-		write(fd_result[1], &test_result, sizeof(test_result))
+		write(fd_result[1], &test_result, sizeof(test_result));
 		close(fd_result[1]);
 		
 		exit(0);
