@@ -44,6 +44,7 @@ set(TEST_SRC
     hipTextureObj2DCheckModes.cc
     hipTextureObj3DCheckModes.cc
     hipGetTextureObjectGETTests.cc
+    hipGetTexObjectGETTests.cc
 )
 
 hip_add_exe_to_target(NAME TextureTest
