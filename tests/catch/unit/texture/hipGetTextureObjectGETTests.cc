@@ -32,19 +32,20 @@ public:
   hipTextureDesc mTexDesc;
   hipChannelFormatDesc mChannelDesc;
   hipResourceViewDesc mResViewDesc;
-  hipArray *mArray
+  hipArray *mArray;
   size_t mSize; /* size in bytes*/
   int mWidth; /* width in elements */
 
   TextureObjectTestWrapper(bool useResourceViewDescriptor) {
-	    
-    mWidth = 128, i;
+
+    int i;    
+    mWidth = 128;
     mSize = mWidth * sizeof(float);
   
     mHostData = (float *) malloc(mSize);
     memset(mHostData, 0, mSize);
   
-    for( i = 0; i < mWidth; i++) {
+    for(i = 0; i < mWidth; i++) {
       mHostData[i] = i;
     }
   
@@ -63,12 +64,10 @@ public:
     mTexDesc.readMode = hipReadModeElementType;
     mTexDesc.normalizedCoords = false;
     
+    memset(&mResViewDesc, 0, sizeof(mResViewDesc));
     if(useResourceViewDescriptor) {
-      memset(&mResViewDesc, 0, sizeof(mResViewDesc));
       mResViewDesc.format = hipResViewFormatFloat1;
       mResViewDesc.width = mSize;
-    } else {
-      mResViewDesc = nullptr;
     }
   
     HIP_CHECK(hipCreateTextureObject(&mTextureObject, &mResDesc, &mTexDesc, useResourceViewDescriptor ? &mResViewDesc : nullptr));
