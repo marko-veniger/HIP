@@ -55,7 +55,7 @@ public:
     mArrayDesc.Width = mWidth;
     mArrayDesc.Height = 0;
     
-    HIP_CHECK(hipArrayCreate(&mArray, &mArrayDesc);
+    HIP_CHECK(hipArrayCreate(&mArray, &mArrayDesc));
     HIP_CHECK(hipMemcpyHtoA(reinterpret_cast<hipArray*>(mArray), 0, mHostData, mSize));
 
     memset(&mResDesc, 0, sizeof(mResDesc));
@@ -68,17 +68,19 @@ public:
     mTexDesc.flags = 0;
     
     memset(&mResViewDesc, 0, sizeof(mResViewDesc));
+    
 #if HT_AMD
     if(useResourceViewDescriptor) {
-      mResViewDesc.format = HIP_RES_VIEW_FORMAT_FLOAT_1X32 ;
+      mResViewDesc.format = HIP_RES_VIEW_FORMAT_FLOAT_1X32;
       mResViewDesc.width = mSize;
     }
 #endif
   
     HIP_CHECK(hipTexObjectCreate(&mTextureObject, &mResDesc, &mTexDesc, useResourceViewDescriptor ? &mResViewDesc : nullptr));
+    
   }
   
-  ~TexObjectTestWrapper(){
+  ~TexObjectTestWrapper() {
     HIP_CHECK(hipDestroyTextureObject(mTextureObject));
     HIP_CHECK(hipFreeArray(mArray));
     free(mHostData);
