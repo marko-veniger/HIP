@@ -63,12 +63,12 @@ class TextureObjectTestWrapper {
     mTexDesc.normalizedCoords = false;
 
     memset(&mResViewDesc, 0, sizeof(mResViewDesc));
-#if HT_AMD
+//#if HT_AMD
     if (useResourceViewDescriptor) {
       mResViewDesc.format = hipResViewFormatFloat1;
       mResViewDesc.width = mSize;
     }
-#endif
+//#endif
 
     HIP_CHECK(hipCreateTextureObject(&mTextureObject, &mResDesc, &mTexDesc,
                                      useResourceViewDescriptor ? &mResViewDesc : nullptr));
@@ -124,7 +124,7 @@ TEST_CASE("Unit_hipGetTextureObjectResourceDesc_negative") {
 
 TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_positive") {
   CHECK_IMAGE_SUPPORT
-#if HT_AMD
+//#if HT_AMD
   TextureObjectTestWrapper texObjWrapper(true);
 
   hipResourceViewDesc checkDesc;
@@ -135,9 +135,9 @@ TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_positive") {
   REQUIRE(checkDesc.format == texObjWrapper.mResViewDesc.format);
   REQUIRE(checkDesc.width == texObjWrapper.mResViewDesc.width);
 
-#else
+//#else
   HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
-#endif
+//#endif
 }
 
 
@@ -160,9 +160,9 @@ TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_negative") {
         hipErrorInvalidValue);
   }
 
-#else
+//#else
   HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
-#endif
+//#endif
 }
 
 
@@ -171,7 +171,7 @@ TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_negative") {
 
 TEST_CASE("Unit_hipGetTextureObjectTextureDesc_positive") {
   CHECK_IMAGE_SUPPORT
-#if HT_AMD
+//#if HT_AMD
   TextureObjectTestWrapper texObjWrapper(false);
 
   hipTextureDesc checkDesc;
@@ -184,15 +184,15 @@ TEST_CASE("Unit_hipGetTextureObjectTextureDesc_positive") {
   REQUIRE(checkDesc.readMode == texObjWrapper.mTexDesc.readMode);
   REQUIRE(checkDesc.normalizedCoords == texObjWrapper.mTexDesc.normalizedCoords);
 
-#else
+//#else
   HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
-#endif
+//#endif
 }
 
 
 TEST_CASE("Unit_hipGetTextureObjectTextureDesc_negative") {
   CHECK_IMAGE_SUPPORT
-#if HT_AMD
+//#if HT_AMD
   TextureObjectTestWrapper texObjWrapper(false);
 
   hipTextureDesc checkDesc;
@@ -208,9 +208,9 @@ TEST_CASE("Unit_hipGetTextureObjectTextureDesc_negative") {
                     hipErrorInvalidValue);
   }
 
-#else
+//#else
   HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
-#endif
+//#endif
 }
 
 /* hipDestroyTextureObject test */
