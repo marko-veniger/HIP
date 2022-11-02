@@ -52,7 +52,7 @@ public:
     mChannelDesc = hipCreateChannelDesc(32, 0, 0, 0, hipChannelFormatKindFloat);
     hipMallocArray(&mArray, &mChannelDesc, mWidth);
   
-    HIP_CHECK(hipMemcpy2DToArray(mArray, 0, 0, hData, mSize, mSize, 1, hipMemcpyHostToDevice));
+    HIP_CHECK(hipMemcpy2DToArray(mArray, 0, 0, mHostData, mSize, mSize, 1, hipMemcpyHostToDevice));
 
     memset(&mResDesc, 0, sizeof(mResDesc));
     mResDesc.resType = hipResourceTypeArray;
@@ -166,7 +166,7 @@ TEST_CASE("Unit_hipGetTextureObjectResourceDesc_positive") {
   
   REQUIRE(checkDesc.addressMode[0] == texObjWrapper.mTexDesc.addressMode[0]);
   REQUIRE(checkDesc.filterMode == texObjWrapper.mTexDesc.filterMode);
-  REQUIRE(checkDesc.readMode == texObjWrapper.mTexDesc.readMode]);
+  REQUIRE(checkDesc.readMode == texObjWrapper.mTexDesc.readMode);
   REQUIRE(checkDesc.normalizedCoords == texObjWrapper.mTexDesc.normalizedCoords);
   
 }
