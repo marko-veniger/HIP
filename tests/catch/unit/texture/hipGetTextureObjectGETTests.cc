@@ -65,10 +65,12 @@ public:
     mTexDesc.normalizedCoords = false;
     
     memset(&mResViewDesc, 0, sizeof(mResViewDesc));
+#if HT_AMD
     if(useResourceViewDescriptor) {
       mResViewDesc.format = hipResViewFormatFloat1;
       mResViewDesc.width = mSize;
     }
+#endif
   
     HIP_CHECK(hipCreateTextureObject(&mTextureObject, &mResDesc, &mTexDesc, useResourceViewDescriptor ? &mResViewDesc : nullptr));
   }
