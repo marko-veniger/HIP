@@ -19,12 +19,11 @@ THE SOFTWARE.
 
 #include <hip_test_common.hh>
 
-#define R 8  // rows, height
-#define C 8  // columns, width
 
 class TexObjectTestWrapper {
 private:
   float *mHostData;
+  bool mOmmitDestroy;
   
 public:
   hipTextureObject_t mTextureObject = 0;
@@ -36,10 +35,9 @@ public:
   size_t mSize; /* size in bytes*/
   int mWidth; /* width in elements */
 
-  TexObjectTestWrapper(bool useResourceViewDescriptor) {
+  TexObjectTestWrapper(bool useResourceViewDescriptor, bool ommitDestroy = false): mOmmitDestroy(ommitDestroy), mWidth(128) {
 
     int i;    
-    mWidth = 128;
     mSize = mWidth * sizeof(float);
   
     mHostData = (float *) malloc(mSize);
@@ -81,7 +79,9 @@ public:
   }
   
   ~TexObjectTestWrapper() {
-    HIP_CHECK(hipTexObjectDestroy(mTextureObject));
+    if(!mOmmitDestroy) {
+      HIP_CHECK(hipTexObjectDestroy(mTextureObject));
+    }
     HIP_CHECK(hipArrayDestroy(mArray));
     free(mHostData);
   }
@@ -225,4 +225,12 @@ TEST_CASE("Unit_hipGetTexObjectTextureDesc_negative") {
   HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
 #endif
   
+}
+
+TEST_CASE("Unit_hipTexObjectDestroy_positive") {
+  CHECK_IMAGE_SUPPORT
+
+  TexObjectTestWrapper texObjWrapper(false, true);
+  REQUIRE(hipTexObjectDestroy(texObjWrapper.mTextureObject) == hipSuccess);
+
 }
