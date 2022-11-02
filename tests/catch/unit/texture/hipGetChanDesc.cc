@@ -58,7 +58,7 @@ TEST_CASE("Unit_hipGetChannelDesc_negative") {
   }
   
   SECTION("array is nullptr") {
-    HIP_CHECK_ERROR(hipGetChannelDesc(&chan_test, nullptr), hipErrorInvalidValue);
+    HIP_CHECK_ERROR(hipGetChannelDesc(&chan_test, nullptr), hipErrorInvalidHandle);
   }
   
   HIP_CHECK(hipFreeArray(hipArray));
