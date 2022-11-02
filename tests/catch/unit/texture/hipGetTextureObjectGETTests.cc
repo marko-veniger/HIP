@@ -119,11 +119,11 @@ TEST_CASE("Unit_hipGetTextureObjectResourceDesc_negative") {
 }
 
 /* hipGetTextureObjectResourceViewDesc tests */
-#if HT_AMD
+
 
 TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_positive") {
   CHECK_IMAGE_SUPPORT
-  
+#if HT_AMD
   TextureObjectTestWrapper texObjWrapper(true);
   
   hipResourceViewDesc checkDesc;
@@ -134,12 +134,16 @@ TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_positive") {
   REQUIRE(checkDesc.format == texObjWrapper.mResViewDesc.format);
   REQUIRE(checkDesc.width == texObjWrapper.mResViewDesc.width);
   
+#else
+  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
+#endif
+  
 }
 
 
 TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_negative") {
   CHECK_IMAGE_SUPPORT
-  
+#if HT_AMD 
   TextureObjectTestWrapper texObjWrapper(true);
   
   hipResourceViewDesc checkDesc;
@@ -153,16 +157,20 @@ TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_negative") {
     HIP_CHECK_ERROR(hipGetTextureObjectResourceViewDesc(&checkDesc, static_cast<hipTextureObject_t>(0)), hipErrorInvalidValue);
   }
   
-}
+#else
+  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
 #endif
+
+}
+
 
 
 /* hipGetTextureObjectTextureDesc tests */
-#if HT_AMD
+
 
 TEST_CASE("Unit_hipGetTextureObjectResourceDesc_positive") {
   CHECK_IMAGE_SUPPORT
-  
+#if HT_AMD
   TextureObjectTestWrapper texObjWrapper(false);
   
   hipTextureDesc checkDesc;
@@ -175,12 +183,16 @@ TEST_CASE("Unit_hipGetTextureObjectResourceDesc_positive") {
   REQUIRE(checkDesc.readMode == texObjWrapper.mTexDesc.readMode);
   REQUIRE(checkDesc.normalizedCoords == texObjWrapper.mTexDesc.normalizedCoords);
   
+#else
+  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
+#endif
+
 }
 
 
 TEST_CASE("Unit_hipGetTextureObjectResourceDesc_negative") {
   CHECK_IMAGE_SUPPORT
-  
+#if HT_AMD
   TextureObjectTestWrapper texObjWrapper(false);
   
   hipTextureDesc checkDesc;
@@ -194,6 +206,8 @@ TEST_CASE("Unit_hipGetTextureObjectResourceDesc_negative") {
     HIP_CHECK_ERROR(hipGetTextureObjectTextureDesc(&checkDesc, static_cast<hipTextureObject_t>(0)), hipErrorInvalidValue);
   }
   
-}
-
+#else
+  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
 #endif
+  
+}
