@@ -225,7 +225,7 @@ TEST_CASE("Unit_hipGetTexObjectTextureDesc_negative") {
 #endif
 }
 
-/* hipTexObjectDestroy tests */
+/* hipTexObjectDestroy test */
 
 TEST_CASE("Unit_hipTexObjectDestroy_positive") {
   CHECK_IMAGE_SUPPORT
@@ -234,7 +234,3 @@ TEST_CASE("Unit_hipTexObjectDestroy_positive") {
   REQUIRE(hipTexObjectDestroy(texObjWrapper.mTextureObject) == hipSuccess);
 }
 
-TEST_CASE("Unit_hipTexObjectDestroy_negative") {
-  CHECK_IMAGE_SUPPORT
-  HIP_CHECK_ERROR(hipTexObjectDestroy(static_cast<hipTextureObject_t>(0)), hipErrorInvalidValue);
-}
