@@ -117,6 +117,7 @@ TEST_CASE("Unit_hipGetTextureObjectResourceDesc_negative") {
 }
 
 /* hipGetTextureObjectResourceViewDesc tests */
+#if HT_AMD
 
 TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_positive") {
   CHECK_IMAGE_SUPPORT
@@ -151,8 +152,11 @@ TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_negative") {
   }
   
 }
+#endif
+
 
 /* hipGetTextureObjectTextureDesc tests */
+#if HT_AMD
 
 TEST_CASE("Unit_hipGetTextureObjectResourceDesc_positive") {
   CHECK_IMAGE_SUPPORT
@@ -189,3 +193,5 @@ TEST_CASE("Unit_hipGetTextureObjectResourceDesc_negative") {
   }
   
 }
+
+#endif
