@@ -143,7 +143,7 @@ TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_positive") {
 
 TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_negative") {
   CHECK_IMAGE_SUPPORT
-#if HT_AMD
+//#if HT_AMD
   TextureObjectTestWrapper texObjWrapper(true);
 
   hipResourceViewDesc checkDesc;
