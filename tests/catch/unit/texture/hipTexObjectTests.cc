@@ -105,7 +105,7 @@ TEST_CASE("Unit_hipGetTexObjectResourceDesc_positive") {
   REQUIRE(checkDesc.res.array.hArray == texObjWrapper.mResDesc.res.array.hArray);
 
 //#else
-  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
+//  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
 //#endif
 }
 
@@ -131,7 +131,7 @@ TEST_CASE("Unit_hipGetTexObjectResourceDesc_negative") {
   }
 
 //#else
-  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
+//  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
 //#endif
 }
 
@@ -152,7 +152,7 @@ TEST_CASE("Unit_hipGetTexObjectResourceViewDesc_positive") {
   REQUIRE(checkDesc.width == texObjWrapper.mResViewDesc.width);
 
 //#else
-  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
+//  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
 //#endif
 }
 
@@ -176,7 +176,7 @@ TEST_CASE("Unit_hipGetTexObjectResourceViewDesc_negative") {
   }
 
 //#else
-  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
+//  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
 //#endif
 }
 
@@ -197,7 +197,7 @@ TEST_CASE("Unit_hipGetTexObjectTextureDesc_positive") {
   REQUIRE(checkDesc.flags == texObjWrapper.mTexDesc.flags);
 
 //#else
-  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
+//  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
 //#endif
 }
 

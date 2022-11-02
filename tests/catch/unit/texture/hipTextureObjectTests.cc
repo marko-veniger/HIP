@@ -136,7 +136,7 @@ TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_positive") {
   REQUIRE(checkDesc.width == texObjWrapper.mResViewDesc.width);
 
 //#else
-  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
+//  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
 //#endif
 }
 
@@ -161,7 +161,7 @@ TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_negative") {
   }
 
 //#else
-  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
+//  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
 //#endif
 }
 
@@ -185,7 +185,7 @@ TEST_CASE("Unit_hipGetTextureObjectTextureDesc_positive") {
   REQUIRE(checkDesc.normalizedCoords == texObjWrapper.mTexDesc.normalizedCoords);
 
 //#else
-  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
+//  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
 //#endif
 }
 
@@ -209,7 +209,7 @@ TEST_CASE("Unit_hipGetTextureObjectTextureDesc_negative") {
   }
 
 //#else
-  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
+//  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
 //#endif
 }
 
