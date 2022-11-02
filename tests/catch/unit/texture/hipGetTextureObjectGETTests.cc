@@ -168,7 +168,7 @@ TEST_CASE("Unit_hipGetTextureObjectResourceViewDesc_negative") {
 /* hipGetTextureObjectTextureDesc tests */
 
 
-TEST_CASE("Unit_hipGetTextureObjectResourceDesc_positive") {
+TEST_CASE("Unit_hipGetTextureObjectTextureDesc_positive") {
   CHECK_IMAGE_SUPPORT
 #if HT_AMD
   TextureObjectTestWrapper texObjWrapper(false);
@@ -190,7 +190,7 @@ TEST_CASE("Unit_hipGetTextureObjectResourceDesc_positive") {
 }
 
 
-TEST_CASE("Unit_hipGetTextureObjectResourceDesc_negative") {
+TEST_CASE("Unit_hipGetTextureObjectTextureDesc_negative") {
   CHECK_IMAGE_SUPPORT
 #if HT_AMD
   TextureObjectTestWrapper texObjWrapper(false);
