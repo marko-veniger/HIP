@@ -21,7 +21,7 @@
    1) This testcase verifies the  basic scenario - supported on
      all devices
 */
-
+#if 0
 #include <hip_test_common.hh>
 #include <hip_test_kernels.hh>
 #include <hip_test_checkers.hh>
@@ -552,3 +552,4 @@ TEST_CASE("Unit_hipMemPoolApi_Default") {
   HIP_CHECK(hipFreeAsync(reinterpret_cast<void*>(C), stream));
   HIP_CHECK(hipStreamDestroy(stream));
 }
+#endif

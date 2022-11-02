@@ -40,6 +40,26 @@ TEST_CASE("Unit_hipGetChannelDesc_CreateAndGet") {
     REQUIRE(false);
   }
 
+  HIP_CHECK(hipFreeArray(hipArray));
+}
 
+
+TEST_CASE("Unit_hipGetChannelDesc_negative") {
+  CHECK_IMAGE_SUPPORT
+  
+  hipChannelFormatDesc chan_test, chan_desc;
+  hipArray *hipArray;
+
+  chan_desc = hipCreateChannelDesc(32, 0, 0, 0, hipChannelFormatKindSigned);
+  HIP_CHECK(hipMallocArray(&hipArray, &chan_desc, C, R, 0));
+  
+  SECTION("desc is nullptr") {
+    HIP_CHECK_ERROR(hipGetChannelDesc(nullptr, hipArray), hipErrorInvalidValue);
+  }
+  
+  SECTION("array is nullptr") {
+    HIP_CHECK_ERROR(hipGetChannelDesc(&chan_test, nullptr), hipErrorInvalidValue);
+  }
+  
   HIP_CHECK(hipFreeArray(hipArray));
 }
