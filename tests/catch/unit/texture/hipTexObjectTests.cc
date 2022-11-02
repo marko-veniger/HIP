@@ -67,12 +67,12 @@ class TexObjectTestWrapper {
 
     memset(&mResViewDesc, 0, sizeof(mResViewDesc));
 
-//#if HT_AMD
+#if HT_AMD
     if (useResourceViewDescriptor) {
       mResViewDesc.format = HIP_RES_VIEW_FORMAT_FLOAT_1X32;
       mResViewDesc.width = mSize;
     }
-//#endif
+#endif
 
     HIP_CHECK(hipTexObjectCreate(&mTextureObject, &mResDesc, &mTexDesc,
                                  useResourceViewDescriptor ? &mResViewDesc : nullptr));
@@ -140,7 +140,7 @@ TEST_CASE("Unit_hipGetTexObjectResourceDesc_negative") {
 
 TEST_CASE("Unit_hipGetTexObjectResourceViewDesc_positive") {
   CHECK_IMAGE_SUPPORT
-//#if HT_AMD
+#if HT_AMD
   TexObjectTestWrapper texObjWrapper(true);
 
   HIP_RESOURCE_VIEW_DESC checkDesc;
@@ -151,9 +151,9 @@ TEST_CASE("Unit_hipGetTexObjectResourceViewDesc_positive") {
   REQUIRE(checkDesc.format == texObjWrapper.mResViewDesc.format);
   REQUIRE(checkDesc.width == texObjWrapper.mResViewDesc.width);
 
-//#else
+#else
 //  HipTest::HIP_SKIP_TEST("Skipping on NVIDIA platform");
-//#endif
+#endif
 }
 
 
