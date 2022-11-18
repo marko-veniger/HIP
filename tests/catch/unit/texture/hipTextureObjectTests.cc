@@ -226,3 +226,13 @@ TEST_CASE("Unit_hipDestroyTextureObject_positive") {
   TextureObjectTestWrapper texObjWrapper(false, true);
   REQUIRE(hipDestroyTextureObject(texObjWrapper.mTextureObject) == hipSuccess);
 }
+
+TEST_CASE("WIP_TEST")
+{
+	int i;
+	for(i = 0; i < 1024; i++)
+	{
+		printf("func %d: %s\n", i, hipApiName(i));
+	}
+	REQUIRE(1);
+}
