@@ -242,7 +242,8 @@ TEST_CASE("WIP_TEST")
 	
 	int arg1 = 5;
 	
-	hipRegisterApiCallback(69, cb_free, &arg1);
+	//hipRegisterApiCallback(69, cb_free, &arg1);
+	hipRegisterActivityCallback(69, cb_free, &arg1);
 	hipFree(nullptr);
 	REQUIRE(1);
 }
