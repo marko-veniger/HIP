@@ -227,6 +227,11 @@ TEST_CASE("Unit_hipDestroyTextureObject_positive") {
   REQUIRE(hipDestroyTextureObject(texObjWrapper.mTextureObject) == hipSuccess);
 }
 
+void cb_free(uint32_t cb_no, hipError_t err, void *args)
+{
+	printf("callback: %d %d %d\n", cn_no, err, args);
+}
+
 TEST_CASE("WIP_TEST")
 {
 	int i;
@@ -234,5 +239,10 @@ TEST_CASE("WIP_TEST")
 	{
 		printf("func %d: %s\n", i, hipApiName(i));
 	}
+	
+	int arg1 = 5;
+	
+	hipRegisterApiCallback(69, cb_free, &arg1);
+	hipFree(nullptr);
 	REQUIRE(1);
 }
