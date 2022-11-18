@@ -232,18 +232,21 @@ void cb_free(uint32_t cb_no, hipError_t err, void *args)
 	printf("callback: %d %d %d\n", cn_no, err, args);
 }
 
+static __global__ void test_kern(int arg) {
+	int a = arg + 1;
+}
+
 TEST_CASE("WIP_TEST")
 {
 	int i;
 	for(i = 0; i < 1024; i++)
 	{
-		printf("func %d: %s\n", i, hipApiName(i));
+		//printf("func %d: %s\n", i, hipApiName(i));
 	}
 	
 	int arg1 = 5;
 	
 	//hipRegisterApiCallback(69, cb_free, &arg1);
-	hipRegisterActivityCallback(69, cb_free, &arg1);
-	hipFree(nullptr);
+	printf("kern %d: %s\n", test_kern, hipKernelNameRef(test_kern));
 	REQUIRE(1);
 }
